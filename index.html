@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DropIntel — Vendas Internacionais</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- SIDEBAR NAV -->
+<nav class="sidebar">
+  <div class="logo">
+    <span class="logo-mark">DI</span>
+    <span class="logo-text">DropIntel</span>
+  </div>
+  <ul class="nav-links">
+    <li class="nav-item active" data-step="1" onclick="goStep(1)">
+      <span class="nav-num">01</span>
+      <span class="nav-label">Tendências</span>
+    </li>
+    <li class="nav-item" data-step="2" onclick="goStep(2)">
+      <span class="nav-num">02</span>
+      <span class="nav-label">Produto</span>
+    </li>
+    <li class="nav-item" data-step="3" onclick="goStep(3)">
+      <span class="nav-num">03</span>
+      <span class="nav-label">Anúncio</span>
+    </li>
+    <li class="nav-item" data-step="4" onclick="goStep(4)">
+      <span class="nav-num">04</span>
+      <span class="nav-label">Publicar</span>
+    </li>
+  </ul>
+  <div class="sidebar-footer">
+    <div class="config-btn" onclick="openConfig()">⚙ Configurações</div>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+  <!-- ═══════════════════════════════ STEP 1: TRENDS ═══════════════════════════════ -->
+  <section class="step-section active" id="step-1">
+    <div class="section-header">
+      <div>
+        <p class="section-eyebrow">Google Trends · Europa</p>
+        <h1 class="section-title">Top Produtos em Alta</h1>
+        <p class="section-sub">Análise em tempo real das tendências de mercado na Europa. Atualizado agora.</p>
+      </div>
+      <button class="btn-primary" onclick="fetchTrends()" id="refresh-btn">
+        <span id="refresh-icon">↻</span> Analisar Mercado
+      </button>
+    </div>
+
+    <div class="filters-row">
+      <div class="filter-chips">
+        <span class="chip active" onclick="filterCategory(this,'all')">Todos</span>
+        <span class="chip" onclick="filterCategory(this,'eletronicos')">Eletrônicos</span>
+        <span class="chip" onclick="filterCategory(this,'casa')">Casa & Jardim</span>
+        <span class="chip" onclick="filterCategory(this,'beleza')">Beleza</span>
+        <span class="chip" onclick="filterCategory(this,'fitness')">Fitness</span>
+        <span class="chip" onclick="filterCategory(this,'pets')">Pets</span>
+      </div>
+      <div class="sort-select-wrap">
+        <select class="sort-select" onchange="sortProducts(this.value)">
+          <option value="trend">Maior Tendência</option>
+          <option value="margin">Maior Margem</option>
+          <option value="volume">Maior Volume</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="products-grid" id="products-grid">
+      <div class="loading-state" id="loading-state">
+        <div class="loading-spinner"></div>
+        <p>Buscando tendências na Europa...</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════ STEP 2: PRODUCT DETAIL ═══════════════════════════════ -->
+  <section class="step-section" id="step-2">
+    <div class="section-header">
+      <div>
+        <p class="section-eyebrow">Produto Selecionado</p>
+        <h1 class="section-title" id="detail-title">—</h1>
+        <p class="section-sub" id="detail-country-badge"></p>
+      </div>
+      <button class="btn-ghost" onclick="goStep(1)">← Voltar</button>
+    </div>
+
+    <div class="product-detail-layout">
+      <div class="product-detail-left">
+        <div class="product-detail-image-wrap">
+          <img id="detail-img" src="" alt="produto"/>
+          <div class="trend-badge-large" id="detail-trend-badge"></div>
+        </div>
+        <div class="product-stats-grid">
+          <div class="stat-card">
+            <span class="stat-label">Custo Médio</span>
+            <span class="stat-value" id="stat-cost">—</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Preço Sugerido</span>
+            <span class="stat-value accent" id="stat-price">—</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Margem Potencial</span>
+            <span class="stat-value green" id="stat-margin">—</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Tendência</span>
+            <span class="stat-value" id="stat-trend">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-detail-right">
+        <div class="detail-block">
+          <h3 class="detail-block-title">Análise de Mercado</h3>
+          <p class="detail-block-text" id="detail-analysis">—</p>
+        </div>
+        <div class="detail-block">
+          <h3 class="detail-block-title">Países em Alta</h3>
+          <div class="countries-list" id="detail-countries"></div>
+        </div>
+        <div class="detail-block">
+          <h3 class="detail-block-title">Fornecedores Sugeridos</h3>
+          <div class="suppliers-list" id="detail-suppliers"></div>
+        </div>
+
+        <div class="margin-calculator">
+          <h3 class="detail-block-title">Calculadora de Margem</h3>
+          <div class="calc-row">
+            <label>Custo do produto (€)</label>
+            <input type="number" class="calc-input" id="calc-cost" placeholder="0.00" oninput="recalcMargin()"/>
+          </div>
+          <div class="calc-row">
+            <label>Frete estimado (€)</label>
+            <input type="number" class="calc-input" id="calc-ship" placeholder="0.00" oninput="recalcMargin()"/>
+          </div>
+          <div class="calc-row">
+            <label>Seu preço de venda (€)</label>
+            <input type="number" class="calc-input" id="calc-sell" placeholder="0.00" oninput="recalcMargin()"/>
+          </div>
+          <div class="calc-row">
+            <label>Budget de Ads (€)</label>
+            <input type="number" class="calc-input" id="calc-ads" placeholder="0.00" oninput="recalcMargin()"/>
+          </div>
+          <div class="calc-result">
+            <div class="calc-result-row">
+              <span>Lucro por venda</span>
+              <span class="calc-result-val" id="calc-profit">€ 0,00</span>
+            </div>
+            <div class="calc-result-row">
+              <span>Margem líquida</span>
+              <span class="calc-result-val green" id="calc-pct">0%</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-primary full-width" onclick="goStep(3)">
+          Continuar → Criar Anúncio
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════ STEP 3: AD CREATOR ═══════════════════════════════ -->
+  <section class="step-section" id="step-3">
+    <div class="section-header">
+      <div>
+        <p class="section-eyebrow">Criação do Anúncio</p>
+        <h1 class="section-title">Monte seu Anúncio</h1>
+        <p class="section-sub">Faça upload da arte, configure o texto e gere com IA.</p>
+      </div>
+      <button class="btn-ghost" onclick="goStep(2)">← Voltar</button>
+    </div>
+
+    <div class="ad-creator-layout">
+      <div class="ad-creator-left">
+        <!-- Upload area -->
+        <div class="upload-zone" id="upload-zone"
+          ondragover="event.preventDefault(); this.classList.add('drag-over')"
+          ondragleave="this.classList.remove('drag-over')"
+          ondrop="handleDrop(event)">
+          <input type="file" id="file-input" accept="image/*" style="display:none" onchange="handleFileSelect(event)"/>
+          <div class="upload-content" id="upload-content">
+            <div class="upload-icon">⊕</div>
+            <p class="upload-title">Arraste sua arte aqui</p>
+            <p class="upload-sub">ou <span class="upload-link" onclick="document.getElementById('file-input').click()">clique para selecionar</span></p>
+            <p class="upload-hint">PNG, JPG, WEBP — máx 10MB</p>
+          </div>
+          <img id="upload-preview" class="upload-preview hidden" src="" alt="preview"/>
+        </div>
+
+        <!-- Ad preview card -->
+        <div class="ad-preview-card" id="ad-preview-card">
+          <div class="ad-preview-store" id="ad-store-name">Sua Loja</div>
+          <img class="ad-preview-img" id="ad-preview-img" src="" alt=""/>
+          <div class="ad-preview-body">
+            <div class="ad-preview-title" id="ad-title-preview">Título do produto aparecerá aqui</div>
+            <div class="ad-preview-price" id="ad-price-preview">€ 0,00</div>
+            <div class="ad-preview-desc" id="ad-desc-preview">Descrição do anúncio...</div>
+            <div class="ad-preview-btn">Comprar agora</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ad-creator-right">
+        <div class="form-group">
+          <label class="form-label">Título do Anúncio</label>
+          <input type="text" class="form-input" id="ad-title" placeholder="Ex: Kit Massageador Elétrico Pro" oninput="syncPreview()"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Preço de Venda (€)</label>
+          <input type="number" class="form-input" id="ad-price" placeholder="0.00" oninput="syncPreview()"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Descrição do Produto</label>
+          <textarea class="form-textarea" id="ad-desc" rows="5" placeholder="Descreva o produto..." oninput="syncPreview()"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nome da Loja (Shopify)</label>
+          <input type="text" class="form-input" id="ad-store" placeholder="minhaloja" oninput="syncPreview()"/>
+        </div>
+
+        <button class="btn-ai" onclick="generateAIContent()" id="ai-btn">
+          <span class="ai-sparkle">✦</span> Gerar com IA
+        </button>
+
+        <div class="ai-status" id="ai-status" style="display:none"></div>
+
+        <div class="tags-group" id="tags-group" style="display:none">
+          <label class="form-label">Tags geradas</label>
+          <div class="tags-list" id="tags-list"></div>
+        </div>
+
+        <button class="btn-primary full-width" onclick="goStep(4)" style="margin-top:24px">
+          Continuar → Publicar na Shopify
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════ STEP 4: PUBLISH ═══════════════════════════════ -->
+  <section class="step-section" id="step-4">
+    <div class="section-header">
+      <div>
+        <p class="section-eyebrow">Publicação</p>
+        <h1 class="section-title">Publicar na Shopify</h1>
+        <p class="section-sub">Configure sua loja e publique o produto com um clique.</p>
+      </div>
+      <button class="btn-ghost" onclick="goStep(3)">← Voltar</button>
+    </div>
+
+    <div class="publish-layout">
+      <div class="publish-left">
+        <div class="shopify-config-card">
+          <div class="shopify-logo-row">
+            <div class="shopify-badge">Shopify</div>
+            <span class="shopify-status" id="shopify-status-badge">Não conectado</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Domínio da Loja</label>
+            <div class="input-with-suffix">
+              <input type="text" class="form-input" id="shopify-domain" placeholder="minhaloja" />
+              <span class="input-suffix">.myshopify.com</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Access Token (Admin API)</label>
+            <input type="password" class="form-input" id="shopify-token" placeholder="shpat_..."/>
+            <p class="form-hint">Gere em: Shopify Admin → Apps → Develop apps → API credentials</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Coleção (opcional)</label>
+            <input type="text" class="form-input" id="shopify-collection" placeholder="Ex: Tendências Europa"/>
+          </div>
+
+          <button class="btn-secondary" onclick="testShopifyConnection()" id="test-btn">
+            Testar Conexão
+          </button>
+        </div>
+
+        <div class="publish-summary-card">
+          <h3 class="detail-block-title">Resumo do Produto</h3>
+          <div class="summary-row"><span>Produto</span><strong id="pub-product-name">—</strong></div>
+          <div class="summary-row"><span>Preço</span><strong id="pub-price">—</strong></div>
+          <div class="summary-row"><span>Tendência</span><strong id="pub-trend">—</strong></div>
+          <div class="summary-row"><span>País em alta</span><strong id="pub-country">—</strong></div>
+        </div>
+      </div>
+
+      <div class="publish-right">
+        <div class="publish-options-card">
+          <h3 class="detail-block-title">Opções de Publicação</h3>
+
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Publicar imediatamente</div>
+              <div class="toggle-sub">Produto fica visível na loja ao publicar</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="opt-publish-now" checked/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Incluir SEO automático</div>
+              <div class="toggle-sub">Meta title e description gerados por IA</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="opt-seo" checked/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Estoque infinito</div>
+              <div class="toggle-sub">Sem limite de unidades (dropshipping)</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="opt-infinite" checked/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="ads-budget-card">
+          <h3 class="detail-block-title">Budget de Impulsionamento</h3>
+          <p class="detail-block-text" style="margin-bottom:16px">Configure quanto quer investir em anúncios para impulsionar o produto após publicar.</p>
+          <div class="budget-slider-row">
+            <span>€ 5</span>
+            <input type="range" min="5" max="500" step="5" value="30" id="ads-budget" class="budget-slider" oninput="updateBudgetDisplay(this.value)"/>
+            <span>€ 500</span>
+          </div>
+          <div class="budget-display">
+            <span class="budget-value" id="budget-display">€ 30 / dia</span>
+            <span class="budget-hint">estimativa de alcance: <span id="budget-reach">~600–1.800</span> pessoas/dia</span>
+          </div>
+          <p class="form-hint" style="margin-top:12px">Os ads são gerenciados manualmente no Meta Ads / TikTok Ads após publicar na Shopify.</p>
+        </div>
+
+        <button class="btn-publish" onclick="publishToShopify()" id="publish-btn">
+          <span>Publicar Produto na Shopify</span>
+          <span class="btn-arrow">→</span>
+        </button>
+
+        <!-- Result box -->
+        <div class="publish-result" id="publish-result" style="display:none">
+          <div class="result-icon" id="result-icon">✓</div>
+          <div class="result-text" id="result-text"></div>
+          <a class="result-link" id="result-link" href="#" target="_blank">Ver produto na loja →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- CONFIG MODAL -->
+<div class="modal-overlay" id="config-modal" onclick="if(event.target===this)closeConfig()">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2>Configurações</h2>
+      <button class="modal-close" onclick="closeConfig()">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Chave da API Anthropic</label>
+      <input type="password" class="form-input" id="cfg-anthropic" placeholder="sk-ant-..."/>
+      <p class="form-hint">Usada para gerar textos com IA. <a href="https://console.anthropic.com/keys" target="_blank">Obter chave →</a></p>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Moeda padrão</label>
+      <select class="form-input" id="cfg-currency">
+        <option value="EUR">€ Euro (EUR)</option>
+        <option value="USD">$ Dólar (USD)</option>
+        <option value="GBP">£ Libra (GBP)</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Idioma padrão dos anúncios</label>
+      <select class="form-input" id="cfg-lang">
+        <option value="pt">Português</option>
+        <option value="en">English</option>
+        <option value="de">Deutsch</option>
+        <option value="fr">Français</option>
+        <option value="es">Español</option>
+      </select>
+    </div>
+    <button class="btn-primary full-width" onclick="saveConfig()">Salvar Configurações</button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
