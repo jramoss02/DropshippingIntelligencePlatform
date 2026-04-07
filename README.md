@@ -21,7 +21,7 @@ A aplicação foi pensada como um **painel de inteligência de mercado**, ideal 
 
 ## 🧩 Como o Sistema Funciona
 
-### 🔎 Etapas 1 e 2 — Análise de Mercado (Inteligência)
+### 🔎 Etapas 1 e 2 - Análise de Mercado (Inteligência)
 
 A parte mais estratégica do sistema.
 
@@ -44,7 +44,7 @@ A parte mais estratégica do sistema.
 
 ---
 
-### 🎨 Etapas 3 e 4 — Upload da Arte e Criação do Anúncio
+### 🎨 Etapas 3 e 4 - Upload da Arte e Criação do Anúncio
 
 Transformação do produto em uma oferta vendável.
 
@@ -60,7 +60,7 @@ Transformação do produto em uma oferta vendável.
 
 ---
 
-### 💰 Etapa 5 — Margem de Lucro e Ads
+### 💰 Etapa 5 - Margem de Lucro e Ads
 
 Calculadora financeira integrada.
 
@@ -75,7 +75,7 @@ Essencial para decidir rapidamente se um produto vale a pena antes de escalar tr
 
 ---
 
-### 📦 Etapas 6, 7 e 8 — Fluxo de Pedido (Dropshipping)
+### 📦 Etapas 6, 7 e 8 - Fluxo de Pedido (Dropshipping)
 
 Após a venda:
 1. O pedido entra na Shopify
