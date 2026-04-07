@@ -1,121 +1,133 @@
-# DropIntel — Sistema de Vendas Internacionais
+# 🧠 Dropshipping Intelligence Platform
+**Análise de Tendências, Criação de Anúncios e Publicação Automatizada**
 
-Plataforma de dropshipping com análise de tendências europeias via Google Trends,
-geração de anúncios com IA (Claude) e publicação automática na Shopify.
-
----
-
-## 🚀 Como rodar
-
-### Opção 1 — Sem Node.js (só leitura de tendências + IA)
-Abra o arquivo `index.html` diretamente no browser:
-```
-Clique duas vezes em index.html
-```
-> A publicação na Shopify não vai funcionar assim por causa do CORS.
-> Use a Opção 2 para publicar de verdade.
+Uma plataforma de dropshipping baseada em **inteligência de mercado**, desenvolvida para identificar produtos em alta, calcular margens, gerar anúncios com IA e publicar diretamente na Shopify — tudo rodando **100% localmente**, sem frameworks e sem banco de dados pago.
 
 ---
 
-### Opção 2 — Com proxy local (recomendado para Shopify)
-Requer Node.js 18+
+## 📌 Visão Geral
 
-```bash
-# Rodar o proxy (já serve o app em http://localhost:3000)
-node proxy.js
-```
+Este projeto centraliza todo o fluxo moderno de dropshipping em um único painel:
 
-Abra http://localhost:3000 no browser.
+1. 📈 Descoberta de produtos em tendência na Europa  
+2. 🔍 Validação de demanda e margem  
+3. 🎨 Criação inteligente de anúncios  
+4. 🛒 Publicação automatizada na Shopify  
+5. 📦 Integração com fornecedores dropshipping  
 
----
-
-## ⚙️ Configuração inicial
-
-### 1. Chave da API Anthropic (para gerar textos com IA)
-- Acesse: https://console.anthropic.com/keys
-- Crie uma chave e cole em **⚙ Configurações** dentro do app
-
-### 2. Shopify — Criar o Access Token
-1. Entre no painel Shopify da sua loja
-2. Vá em **Settings → Apps and sales channels → Develop apps**
-3. Clique em **Create an app**
-4. Dê um nome (ex: "DropIntel")
-5. Clique em **Configure Admin API scopes**
-6. Ative as permissões:
-   - `write_products` ✓
-   - `read_products` ✓
-   - `write_inventory` ✓
-7. Clique em **Save** → **Install app**
-8. Copie o **Admin API access token** (começa com `shpat_`)
-
-### 3. Preencher no app
-- **Domínio da loja**: só o prefixo, sem `.myshopify.com`
-  - Ex: se sua loja é `minhaloja.myshopify.com`, coloque `minhaloja`
-- **Access Token**: o token copiado no passo anterior
+A aplicação foi pensada como um **painel de inteligência de mercado**, ideal para validação rápida de produtos (MVP) e tomada de decisão baseada em dados.
 
 ---
 
-## 📂 Estrutura dos arquivos
+## 🧩 Como o Sistema Funciona
 
-```
-dropship-app/
-├── index.html      # Aplicação principal
-├── style.css       # Estilos (tema escuro editorial)
-├── app.js          # Lógica: Trends, IA, Shopify
-├── proxy.js        # Servidor proxy local (Node.js)
-└── README.md       # Este arquivo
-```
+### 🔎 Etapas 1 e 2 — Análise de Mercado (Inteligência)
 
----
+A parte mais estratégica do sistema.
 
-## 🔄 Fluxo de uso
+**Fontes de dados:**
+- **Google Trends (API pública)**  
+  Identificação de produtos e categorias em crescimento por país europeu
+- **AliExpress (dados públicos via scraping)**  
+  Validação de demanda, imagens, faixa de preço e fornecedores
 
-```
-1. TENDÊNCIAS  → Clique em "Analisar Mercado" para buscar top produtos na Europa
-2. PRODUTO     → Clique em um produto para ver detalhes, análise e calcular margem
-3. ANÚNCIO     → Faça upload da sua arte, use IA para gerar título e descrição
-4. PUBLICAR    → Configure sua Shopify e publique com um clique
-```
+**O sistema:**
+- Cruza crescimento de buscas + interesse regional
+- Prioriza produtos com potencial de margem
+- Exibe os **Top 5 produtos em alta**, contendo:
+  - Imagem do produto
+  - País com maior crescimento (bandeira)
+  - Score de tendência
+  - Margem potencial estimada
 
----
-
-## 🌍 Como funciona a análise de tendências
-
-O app usa:
-1. **Google Trends RSS** (via proxy CORS) para trending searches na Alemanha, França, UK e outros
-2. **Base de dados local** com 6 produtos validados e métricas de mercado europeu
-3. **Score dinâmico**: os produtos ganham boost quando aparecem nos trending topics em tempo real
-
-> Para análise mais precisa em produção, considere:
-> - [pytrends](https://github.com/GeneralMills/pytrends) (Python, gratuito)
-> - [Serpapi Google Trends](https://serpapi.com/) (~$50/mês)
-> - [Sell The Trend](https://www.sellthetrend.com/) (~$40/mês)
+> ⚠️ Ferramentas pagas como Minea ou Sell The Trend oferecem maior precisão, porém esta solução utiliza alternativas gratuitas ideais para início e testes.
 
 ---
 
-## ⚠️ CORS e Shopify
+### 🎨 Etapas 3 e 4 — Upload da Arte e Criação do Anúncio
 
-A API Admin da Shopify bloqueia chamadas diretas do browser (CORS).
+Transformação do produto em uma oferta vendável.
 
-**Solução incluída**: o `proxy.js` é um servidor Node.js que faz a ponte:
-```
-Browser → proxy.js (localhost:3000) → Shopify API
-```
-
-No front-end (quando rodando pelo proxy), as chamadas à Shopify usam:
-```
-POST /shopify/products.json
-Headers:
-  x-shop-domain: sua-loja
-  x-shopify-access-token: shpat_...
-```
+**Funcionalidades:**
+- Upload de imagem por clique ou arraste
+- Preview do anúncio em tempo real (layout estilo Shopify)
+- Geração automática com IA de:
+  - Título
+  - Descrição
+  - Tags
+  - Texto persuasivo  
+- Integração direta com a **API da Anthropic (Claude)** rodando no browser
 
 ---
 
-## 💡 Próximos passos sugeridos
+### 💰 Etapa 5 — Margem de Lucro e Ads
 
-- [ ] Integrar AliExpress/CJ Dropshipping API para importar produtos automaticamente
-- [ ] Adicionar painel de pedidos recebidos
-- [ ] Integrar Meta Ads API para criar campanhas direto no app
-- [ ] Adicionar mais países além da Europa (EUA, Austrália)
-- [ ] Dashboard com métricas de vendas da Shopify
+Calculadora financeira integrada.
+
+O sistema calcula automaticamente:
+- Custo do fornecedor
+- Frete
+- Taxas da plataforma
+- Investimento em anúncios
+- ✅ **Lucro líquido estimado**
+
+Essencial para decidir rapidamente se um produto vale a pena antes de escalar tráfego pago (Meta Ads / TikTok Ads).
+
+---
+
+### 📦 Etapas 6, 7 e 8 — Fluxo de Pedido (Dropshipping)
+
+Após a venda:
+1. O pedido entra na Shopify
+2. Os dados são enviados ao fornecedor (AliExpress, CJ Dropshipping, Zendrop)
+3. O fornecedor envia o produto direto ao cliente final, com etiqueta personalizada da marca
+
+---
+
+## 🖥️ Telas da Aplicação
+
+### ① Tendências
+- Top produtos em alta na Europa
+- Filtro por categoria
+- Ordenação por score ou margem
+- Visual de painel de inteligência de mercado
+
+### ② Produto
+- Detalhes completos do produto
+- Países em destaque
+- Fornecedores sugeridos
+- Calculadora interativa de margem
+
+### ③ Anúncio
+- Upload de criativos
+- Preview em tempo real
+- Botão **“Gerar com IA”**
+
+### ④ Publicar
+- Conexão com Shopify (domínio + token)
+- Configurações de status, SEO e estoque
+- Simulação de budget de ads
+- Publicação com um clique
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+- **Frontend:**  
+  - HTML5  
+  - CSS3  
+  - JavaScript (Vanilla)
+
+- **IA:**  
+  - Anthropic (Claude API)
+
+- **APIs e Integrações:**  
+  - Google Trends  
+  - AliExpress (dados públicos)  
+  - Shopify API
+
+- **Backend Local (opcional):**  
+  - Node.js (proxy para CORS com Shopify)
+
+- **Armazenamento:**  
+  - `localStorage` (zero banco de dados)
