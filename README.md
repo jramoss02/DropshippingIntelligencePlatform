@@ -1,7 +1,7 @@
 # 🧠 Dropshipping Intelligence Platform
 **Análise de Tendências, Criação de Anúncios e Publicação Automatizada**
 
-Uma plataforma de dropshipping baseada em **inteligência de mercado**, desenvolvida para identificar produtos em alta, calcular margens, gerar anúncios com IA e publicar diretamente na Shopify — tudo rodando **100% localmente**, sem frameworks e sem banco de dados pago.
+Uma plataforma de dropshipping baseada em **inteligência de mercado**, desenvolvida para identificar produtos em alta, calcular margens, gerar anúncios com IA e publicar diretamente na Shopify, tudo rodando **100% localmente**, sem frameworks e sem banco de dados pago.
 
 ---
 
